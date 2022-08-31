@@ -6,7 +6,7 @@ spring:
     consumer:
       group-id: "default"
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: ${BOOTSTRAP_SERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   servlet:
@@ -22,5 +22,5 @@ topic:
   transaction_topic: t.transaction
   
 nest:
-  api.url: http://20.244.4.156:8081/uploadFile
+  api.url: ${NEST_API:http://20.244.4.156:8081/uploadFile}
 
