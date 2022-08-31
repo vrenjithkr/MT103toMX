@@ -1,0 +1,33 @@
+version: '2.1'
+
+services:
+  transcation_service:
+    image: transcation_service:latest
+    hostname: transcation_service
+    container_name: transcation_service
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: "jdbc:postgresql://13.232.12.61:5432/postgres"
+      BOOTSTRAP_SERVER: "13.232.12.61:9092"
+
+  account_service:
+    image: account_service:latest
+    hostname: account_service
+    container_name: account_service
+    ports:
+      - "8082:8082"
+    environment:
+      DB_URL: "jdbc:postgresql://13.232.12.61:5432/postgres"
+      BOOTSTRAP_SERVER: "13.232.12.61:9092"
+
+  schema_service:
+    image: schema_service:latest
+    hostname: schema_service
+    container_name: schema_service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: "jdbc:postgresql://13.232.12.61:5432/postgres"
+      BOOTSTRAP_SERVER: "13.232.12.61:9092"
+      NEST_API: http://20.244.4.156:8081/uploadFile
