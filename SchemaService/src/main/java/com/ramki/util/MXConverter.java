@@ -1,15 +1,20 @@
 package com.ramki.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.prowidesoftware.swift.model.mt.mt1xx.MT103;
 import com.ramki.model.pacs008.*;
+import com.ramki.service.ValidationService;
 
 @Component
 public class MXConverter {
 
+	static final Logger log = LoggerFactory.getLogger(MXConverter.class);
+			
 	public Document convert(MT103 mtMessage) {
 		Document mxDocument = new Document();
 		FIToFICstmrCdtTrf fiToFICstmrCdtTrf = new FIToFICstmrCdtTrf();
@@ -64,9 +69,8 @@ public class MXConverter {
 		try {
 			mxdata = xmlMapper.writeValueAsString(mxDocument);
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			log.error("Error in MXConverter at method convert. "+e.getMessage());
 		}
-		System.out.println(mxdata);
 		return mxDocument;
 
 	}

@@ -2,6 +2,8 @@ package com.ramki.hackathon.service;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,9 @@ public class ValidationService {
 
 	@Autowired
 	TransactionsRepository transactionRepository;
+	
+	static final Logger log = LoggerFactory.getLogger(ValidationService.class);
+
 
 	public void validate(TransactionEventModel transactionEventModel) {
 		AccountValidateModel account = new AccountValidateModel(transactionEventModel.getTransactionId(),
@@ -36,6 +41,7 @@ public class ValidationService {
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.error("Error in ValidationService at method validate. "+e.getMessage());
 		}
 
 	}

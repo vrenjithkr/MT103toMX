@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -23,6 +25,8 @@ public class SchemaValidatorUtil {
 
 	@Autowired
 	RestUtil restUtil;
+	
+	static final Logger log = LoggerFactory.getLogger(SchemaValidatorUtil.class);
 
 //	@Autowired
 //	EventProducer producer;
@@ -64,6 +68,7 @@ public class SchemaValidatorUtil {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.error("Error in SchemaValidatorUtil at method validateMessage. "+e.getMessage());
 		}
 		return validationFlag;
 	}
@@ -76,6 +81,7 @@ public class SchemaValidatorUtil {
 					+ "</Document>";
 		} catch (JSONException e) {
 			e.printStackTrace();
+			log.error("Error in SchemaValidatorUtil at method convertToXML. "+e.getMessage());
 		}
 		return xml;
 	}

@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import com.ramki.account.model.AccountValidateModel;
 import com.ramki.account.producer.EventProducer;
 import com.ramki.account.repository.AccountRepository;
 import com.ramki.account.repository.TransactionsRepository;
+import com.ramki.util.SchemaValidatorUtil;
 
 @Service
 public class ValidationService {
@@ -24,6 +27,8 @@ public class ValidationService {
 
 	@Autowired
 	EventProducer producer;
+
+	static final Logger log = LoggerFactory.getLogger(ValidationService.class);
 
 	@PostConstruct
 	void inserAccount() {
@@ -50,6 +55,7 @@ public class ValidationService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.error("Error in ValidationService at method validate. " + e.getMessage());
 		}
 
 	}

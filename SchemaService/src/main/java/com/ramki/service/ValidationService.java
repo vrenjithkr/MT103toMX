@@ -1,5 +1,7 @@
 package com.ramki.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +27,14 @@ public class ValidationService {
 
 	@Autowired
 	EventProducer producer;
+	
+	static final Logger log = LoggerFactory.getLogger(ValidationService.class);
 
 	public void validate(TransactionEventModel transactionEventModel) {
 
 		MT103 mtMessage = parser.parseToMT103(transactionEventModel.getMessage());
 //		if (validator.validateMT103(mtMessage)) {
 			Document mxMessage = converter.convert(mtMessage);
-			System.out.println("mxMessage " +mxMessage);
 			if (validator.validateMessage(transactionEventModel.getTransactionId(), transactionEventModel.getMessage(),mxMessage)) {
 				transactionEventModel.setSchemaValidation("success");
 				transactionEventModel.setMxDocument(mxMessage);
@@ -45,6 +48,7 @@ public class ValidationService {
 				producer.sendMessage(transactionEventModel);
 			} catch (Exception e) {
 				e.printStackTrace();
+				log.error("Error in ValidationService at method validate. "+e.getMessage());
 			}
 //		}
 

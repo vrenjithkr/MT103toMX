@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ramki.common.model.AccountValidateModel;
 import com.ramki.common.model.TransactionEventModel;
 import com.ramki.common.model.TransactionInfo;
+import com.ramki.hackathon.controller.TransactionController;
 import com.ramki.hackathon.model.RequestModel;
 import com.ramki.hackathon.model.ResponseModel;
 import com.ramki.hackathon.model.TransactionsModel;
@@ -26,6 +29,8 @@ public class TransactionService {
 
 	@Autowired
 	EventProducer producer;
+	
+	static final Logger log = LoggerFactory.getLogger(TransactionService.class);
 
 	public ResponseModel process(RequestModel request) {
 		ResponseModel responseModel = null;
@@ -41,6 +46,7 @@ public class TransactionService {
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.error("Error in TransactionService at method process. "+e.getMessage());
 		}
 
 		return responseModel;
