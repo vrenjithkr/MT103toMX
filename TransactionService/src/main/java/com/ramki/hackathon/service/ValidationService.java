@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ramki.common.model.AccountValidateModel;
-import com.ramki.common.model.TransactionEventModel;
+import com.ramki.hackathon.model.AccountValidateModel;
+import com.ramki.hackathon.model.TransactionEventModel;
 import com.ramki.hackathon.model.TransactionsModel;
 import com.ramki.hackathon.producer.EventProducer;
 import com.ramki.hackathon.repository.TransactionsRepository;

@@ -14,7 +14,6 @@ import com.ramki.account.model.AccountValidateModel;
 import com.ramki.account.producer.EventProducer;
 import com.ramki.account.repository.AccountRepository;
 import com.ramki.account.repository.TransactionsRepository;
-import com.ramki.util.SchemaValidatorUtil;
 
 @Service
 public class ValidationService {
@@ -42,7 +41,7 @@ public class ValidationService {
 		try {
 
 			Optional<AccountModel> userAccount = accountRepository.findById(transactionEventModel.getUserID());
-			if (userAccount.get().getAccountBalance() > transactionEventModel.getTransactionAmount()) {
+			if (userAccount.get().getAccountBalance() >= transactionEventModel.getTransactionAmount()) {
 				userAccount.get().setAccountBalance(
 						userAccount.get().getAccountBalance() - transactionEventModel.getTransactionAmount());
 				accountRepository.save(userAccount.get());

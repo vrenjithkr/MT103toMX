@@ -11,12 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ramki.common.model.AccountValidateModel;
-import com.ramki.common.model.TransactionEventModel;
-import com.ramki.common.model.TransactionInfo;
-import com.ramki.hackathon.controller.TransactionController;
+import com.ramki.hackathon.model.AccountValidateModel;
 import com.ramki.hackathon.model.RequestModel;
 import com.ramki.hackathon.model.ResponseModel;
+import com.ramki.hackathon.model.TransactionEventModel;
+import com.ramki.hackathon.model.TransactionInfo;
 import com.ramki.hackathon.model.TransactionsModel;
 import com.ramki.hackathon.producer.EventProducer;
 import com.ramki.hackathon.repository.TransactionsRepository;
@@ -54,6 +53,7 @@ public class TransactionService {
 
 	public void postMX(AccountValidateModel accountModel) {
 		Optional<TransactionsModel> transactionsModel = transactionRepository.findById(accountModel.getTransactionId());
+		System.out.println(accountModel.getAccountValidation() + ": "+accountModel.getTransactionId());
 		if (accountModel.getAccountValidation().contains("success")) {
 			transactionsModel.get().setAccountValidation("success");
 			transactionsModel.get().setTransactionStatus("Processsed");

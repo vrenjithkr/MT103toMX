@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ramki.common.model.AccountValidateModel;
-import com.ramki.common.model.TransactionEventModel;
+import com.ramki.hackathon.model.AccountValidateModel;
+import com.ramki.hackathon.model.TransactionEventModel;
 
 @Component
 public class EventProducer {
