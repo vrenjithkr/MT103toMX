@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.prowidesoftware.swift.model.mt.mt1xx.MT103;
 import com.ramki.model.TransactionEventModel;
 import com.ramki.model.pacs008.Document;
@@ -35,9 +37,11 @@ public class ValidationService {
 		MT103 mtMessage = parser.parseToMT103(transactionEventModel.getMessage());
 //		if (validator.validateMT103(mtMessage)) {
 			Document mxMessage = converter.convert(mtMessage);
-			if (validator.validateMessage(transactionEventModel.getTransactionId(), transactionEventModel.getMessage(),mxMessage)) {
+			String mxText = converter.convert(mxMessage);
+			if (validator.validateMessage(transactionEventModel.getTransactionId(), transactionEventModel.getMessage(),mxText)) {
+				
 				transactionEventModel.setSchemaValidation("success");
-				transactionEventModel.setMxDocument(mxMessage);
+				transactionEventModel.setMxDocument(mxText);
 				transactionEventModel
 						.setTransactionAmount(mxMessage.getfIToFICstmrCdtTrf().getCdtTrfTxInf().getIntrBkSttlmAmt());
 				transactionEventModel.setUserAccount(

@@ -6,13 +6,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ramki.hackathon.model.RequestModel;
 import com.ramki.hackathon.model.ResponseModel;
@@ -56,6 +61,17 @@ public class TransactionController {
 		log.info("List a user transactions");
 		TransactionInfo transaction = transactionService.getTransaction(transactionId);
 		return new ResponseEntity<>(transaction, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@ResponseBody
+	@ApiOperation(value = "Upload mt103 file", response = String.class)
+	public ResponseEntity<ResponseModel> uploadFile(
+			@RequestParam("file") MultipartFile multipartFile,@RequestPart String userId) {
+//		String userId ="user123";
+		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+		ResponseModel response = transactionService.processFile(userId, fileName, multipartFile);
+		return new ResponseEntity<ResponseModel>(response, HttpStatus.OK);
 	}
 
 }

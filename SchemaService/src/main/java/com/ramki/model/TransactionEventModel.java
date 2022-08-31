@@ -9,7 +9,7 @@ public class TransactionEventModel {
 	String message;
 	String schemaValidation;
 	String accountValidation;
-	Document mxDocument;
+	String mxDocument;
 	long transactionAmount;
 	String userAccount;
 
@@ -45,11 +45,11 @@ public class TransactionEventModel {
 		return schemaValidation;
 	}
 
-	public Document getMxDocument() {
+	public String getMxDocument() {
 		return mxDocument;
 	}
 
-	public void setMxDocument(Document mxDocument) {
+	public void setMxDocument(String mxDocument) {
 		this.mxDocument = mxDocument;
 	}
 

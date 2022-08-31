@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ramki.hackathon.model.AccountValidateModel;
@@ -19,6 +20,7 @@ import com.ramki.hackathon.model.TransactionInfo;
 import com.ramki.hackathon.model.TransactionsModel;
 import com.ramki.hackathon.producer.EventProducer;
 import com.ramki.hackathon.repository.TransactionsRepository;
+import com.ramki.hackathon.utils.FileUploadUtil;
 
 @Service
 public class TransactionService {
@@ -28,24 +30,27 @@ public class TransactionService {
 
 	@Autowired
 	EventProducer producer;
-	
+
+	@Autowired
+	FileUploadUtil fileUploadUtil;
+
 	static final Logger log = LoggerFactory.getLogger(TransactionService.class);
 
 	public ResponseModel process(RequestModel request) {
 		ResponseModel responseModel = null;
 		TransactionsModel transaction = new TransactionsModel(request.getUserId(), request.getMtMessage());
 		TransactionsModel transactions = transactionRepository.save(transaction);
-		TransactionEventModel transactionEventModel = new TransactionEventModel(transactions.getTransactionId(),
-				request.getUserId(), request.getMtMessage());
-
+		long transactionId = transactions.getTransactionId();
+		TransactionEventModel transactionEventModel = new TransactionEventModel(transactionId, request.getUserId(),
+				request.getMtMessage());
 		try {
 			producer.sendMessage(transactionEventModel);
-			responseModel = new ResponseModel(200,
-					"Transaction has been initiated. Yor transaction id is " + transactions.getTransactionId());
+			if (transactionId > 0)
+				return new ResponseModel(200, "Transaction has been initiated. Yor transaction id is " + transactionId);
+			else
+				return new ResponseModel(503, "Transaction has not initiated try after some time");
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			log.error("Error in TransactionService at method process. "+e.getMessage());
+			log.error("Error in TransactionService at method process. " + e.getMessage());
 		}
 
 		return responseModel;
@@ -53,13 +58,14 @@ public class TransactionService {
 
 	public void postMX(AccountValidateModel accountModel) {
 		Optional<TransactionsModel> transactionsModel = transactionRepository.findById(accountModel.getTransactionId());
-		System.out.println(accountModel.getAccountValidation() + ": "+accountModel.getTransactionId());
 		if (accountModel.getAccountValidation().contains("success")) {
 			transactionsModel.get().setAccountValidation("success");
 			transactionsModel.get().setTransactionStatus("Processsed");
-			transactionRepository.save(transactionsModel.get());
+		} else {
+			transactionsModel.get().setAccountValidation("failed");
+			transactionsModel.get().setTransactionStatus("canceled");
 		}
-
+		transactionRepository.save(transactionsModel.get());
 	}
 
 	public List<TransactionInfo> getAllTransactions() {
@@ -83,6 +89,14 @@ public class TransactionService {
 		transactionInfo.setTransactionStatus(transactionsModel.get().getTransactionStatus());
 		transactionInfo.setUserID(transactionsModel.get().getUserID());
 		return transactionInfo;
+	}
+
+	public ResponseModel processFile(String userId, String fileName, MultipartFile multipartFile) {
+		long transactionId = fileUploadUtil.saveFile(userId, fileName, multipartFile);
+		if (transactionId > 0)
+			return new ResponseModel(200, "Transaction has been initiated. Yor transaction id is " + transactionId);
+		else
+			return new ResponseModel(503, "Transaction has not initiated try after some time");
 	}
 
 }

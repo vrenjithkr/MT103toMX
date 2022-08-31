@@ -3,20 +3,20 @@ package com.ramki.model.pacs008;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CdtTrfTxInf {
-	@JsonProperty("Cdtr")
-	private Cdtr cdtr;
-	@JsonProperty("PmtTpInf")
-	private PmtTpInf pmtTpInf;
-	@JsonProperty("DbtrAcct")
-	private DbtrAcct dbtrAcct;
-	@JsonProperty("IntrBkSttlmAmt")
-	private Integer intrBkSttlmAmt;
-	@JsonProperty("CdtrAcct")
-	private CdtrAcct cdtrAcct;
 	@JsonProperty("PmtId")
 	private PmtId pmtId;
+	@JsonProperty("PmtTpInf")
+	private PmtTpInf pmtTpInf;
+	@JsonProperty("IntrBkSttlmAmt")
+	private Integer intrBkSttlmAmt;
 	@JsonProperty("Dbtr")
 	private Dbtr dbtr;
+	@JsonProperty("DbtrAcct")
+	private DbtrAcct dbtrAcct;
+	@JsonProperty("Cdtr")
+	private Cdtr cdtr;
+	@JsonProperty("CdtrAcct")
+	private CdtrAcct cdtrAcct;
 
 	public Cdtr getCdtr() {
 		return cdtr;

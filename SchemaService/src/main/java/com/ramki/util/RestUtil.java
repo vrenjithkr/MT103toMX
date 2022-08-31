@@ -17,32 +17,38 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.ramki.service.ValidationService;
-
 @Component
 public class RestUtil {
 
 	@Value("${nest.api.url}")
 	private String apiUrl;
-	
+
 	static final Logger log = LoggerFactory.getLogger(RestUtil.class);
 
 	public boolean doPost(String mtFilename, String mxFilename) {
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-		MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
-		multipartBodyBuilder.part("teamName", "Hackthon-Ramki");
-		ClassPathResource mxResource = new ClassPathResource("/".concat(mxFilename));
-		ClassPathResource mtResource = new ClassPathResource("/".concat(mtFilename));
-		multipartBodyBuilder.part("pacs008File", mxResource, MediaType.APPLICATION_XML);
-		multipartBodyBuilder.part("mt103File", mtResource, MediaType.TEXT_PLAIN);
-		MultiValueMap<String, HttpEntity<?>> multipartBody = multipartBodyBuilder.build();
-		HttpEntity<MultiValueMap<String, HttpEntity<?>>> httpEntity = new HttpEntity<>(multipartBody, headers);
-		ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, httpEntity, String.class);
-		System.out.println(responseEntity);
-		doClean(mxResource, mtResource);
-		return true;
+		boolean validationFlag = true;
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+			multipartBodyBuilder.part("teamName", "Hackthon-Ramki");
+			ClassPathResource mxResource = new ClassPathResource("/".concat(mxFilename));
+			ClassPathResource mtResource = new ClassPathResource("/".concat(mtFilename));
+			multipartBodyBuilder.part("pacs008File", mxResource, MediaType.APPLICATION_XML);
+			multipartBodyBuilder.part("mt103File", mtResource, MediaType.TEXT_PLAIN);
+			MultiValueMap<String, HttpEntity<?>> multipartBody = multipartBodyBuilder.build();
+			HttpEntity<MultiValueMap<String, HttpEntity<?>>> httpEntity = new HttpEntity<>(multipartBody, headers);
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, httpEntity, String.class);
+			if (!responseEntity.getBody().equalsIgnoreCase("VALIDATION PASSED"))
+				validationFlag = false;
+			doClean(mxResource, mtResource);
+		} catch (Exception e) {
+			validationFlag = false;
+			log.info("Info from method doPost in RestUtil. tmp files deletion is failed");
+		}
+
+		return validationFlag;
 	}
 
 	private static void doClean(ClassPathResource mxResource, ClassPathResource mtResource) {
@@ -55,9 +61,7 @@ public class RestUtil {
 				log.info("Info from method doClean in RestUtil. tmp files deletion is failed");
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			log.error("Error in RestUtil at method doClean. "+e.getMessage());
+			log.error("Error in RestUtil at method doClean. " + e.getMessage());
 		}
 	}
 }

@@ -49,7 +49,7 @@ public class ValidationService {
 				producer.sendAccountMessage(transactionEventModel);
 			} else {
 				transactionEventModel.setAccountValidation("failed");
-				producer.sendValidationError("Account validation failed");
+				producer.sendAccountMessage(transactionEventModel);
 			}
 
 		} catch (Exception e) {

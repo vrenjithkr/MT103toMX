@@ -22,27 +22,30 @@ public class ValidationService {
 
 	@Autowired
 	TransactionsRepository transactionRepository;
-	
+
 	static final Logger log = LoggerFactory.getLogger(ValidationService.class);
 
-
 	public void validate(TransactionEventModel transactionEventModel) {
-		AccountValidateModel account = new AccountValidateModel(transactionEventModel.getTransactionId(),
-				transactionEventModel.getUserID(), transactionEventModel.getTransactionAmount(),
-				transactionEventModel.getUserAccount());
 		Optional<TransactionsModel> transactionsModel = transactionRepository
 				.findById(transactionEventModel.getTransactionId());
-		transactionsModel.get().setMxDocument(transactionEventModel.getMxDocument().toString());
-		transactionsModel.get().setSchemaValidation("success");
-		transactionRepository.save(transactionsModel.get());
+		if (!transactionEventModel.getSchemaValidation().contentEquals("failed")) {
 
-		try {
-			producer.sendAccountMessage(account);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			log.error("Error in ValidationService at method validate. "+e.getMessage());
+			AccountValidateModel account = new AccountValidateModel(transactionEventModel.getTransactionId(),
+					transactionEventModel.getUserID(), transactionEventModel.getTransactionAmount(),
+					transactionEventModel.getUserAccount());
+			transactionsModel.get().setMxDocument(transactionEventModel.getMxDocument());
+			transactionsModel.get().setSchemaValidation("success");
+			try {
+				producer.sendAccountMessage(account);
+			} catch (JsonProcessingException e) {
+				log.error("Error in ValidationService at method validate. " + e.getMessage());
+			}
+		} else {
+			transactionsModel.get().setSchemaValidation("failed");
+			transactionsModel.get().setTransactionStatus("canceled");
 		}
+
+		transactionRepository.save(transactionsModel.get());
 
 	}
 

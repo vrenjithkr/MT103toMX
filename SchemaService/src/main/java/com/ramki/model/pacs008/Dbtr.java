@@ -3,10 +3,11 @@ package com.ramki.model.pacs008;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Dbtr {
-	@JsonProperty("PstlAdr")
-	private PstlAdr pstlAdr;
+
 	@JsonProperty("Nm")
 	private String nm;
+	@JsonProperty("PstlAdr")
+	private PstlAdr pstlAdr;
 
 	public PstlAdr getPstlAdr() {
 		return pstlAdr;
