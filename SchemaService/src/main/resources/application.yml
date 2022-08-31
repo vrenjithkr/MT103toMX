@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  kafka:
+    consumer:
+      group-id: "default"
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+topic:
+  schema_topic: t.transaction.schema
+  schema__validator_topic: t.transaction.schema_validator
+  transaction_topic: t.transaction
+  
+nest:
+  api.url: http://20.244.4.156:8081/uploadFile
+

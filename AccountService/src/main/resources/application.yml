@@ -1,0 +1,27 @@
+server:
+  port: 8082
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy:  ANT_PATH_MATCHER
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  kafka:
+    consumer:
+      group-id: "default"
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+topic:
+  account_topic: t.transaction.account
+  account_validator_topic: t.transaction.account_validator
+  transaction_account_topic: t.transaction.account_response
+  
